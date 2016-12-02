@@ -1,0 +1,53 @@
+apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'com.antfortune.freeline'
+android {
+    compileSdkVersion 22
+    buildToolsVersion "24.0.1"
+    defaultConfig {
+        applicationId "com.beibei.mingmanman.readxiaoshuo"
+        minSdkVersion 22
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+    }
+
+}
+
+android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+retrolambda {
+    javaVersion JavaVersion.VERSION_1_6
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile files('libs/okhttp-3.4.1.jar')
+    compile files('libs/okio-1.10.0.jar')
+    compile files('libs/jsoup-1.9.2.jar')
+    compile files('libs/cupboard-2.1.4.jar')
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:recyclerview-v7:22.2.1'
+    compile 'com.android.support:design:22.2.1'
+    compile files('libs/glide-3.7.0.jar')
+    compile files('libs/rxjava-1.2.1.jar')
+    compile(name:'rxandroid-1.2.1', ext:'aar')
+
+}

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:paddingBottom="@dimen/abc_button_padding_horizontal_material"
+    android:paddingEnd="8dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingStart="8dp"
+    android:paddingTop="8dp">
+
+    <ImageView
+        android:layout_width="110dp"
+        android:layout_height="140dp"
+        android:src="@mipmap/noimg"
+        android:id="@+id/xiaoshuo_img" />
+
+    <TextView
+        android:id="@+id/xiaoshuo_ming"
+        android:text="标题"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_toRightOf="@+id/xiaoshuo_img"
+        android:layout_toEndOf="@+id/xiaoshuo_img"
+        android:textAlignment="textStart"
+        android:textSize="16sp"
+        tools:layout_marginLeft="16dp"
+        android:layout_marginLeft="16dp" />
+
+    <TextView
+        android:id="@+id/xiaoshuo_jianjie"
+        android:text="介绍"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/xiaoshuo_ming"
+        android:maxLines="2"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/xiaoshuo_img"
+        android:layout_toEndOf="@+id/xiaoshuo_img"
+        android:textSize="14sp"
+        android:textAlignment="viewStart"
+        android:fontFamily="sans-serif"
+        tools:layout_marginLeft="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:maxLines="2"
+        android:id="@+id/xiaoshuo_info"
+        android:layout_below="@+id/xiaoshuo_jianjie"
+        android:layout_alignLeft="@+id/xiaoshuo_jianjie"
+        android:layout_alignStart="@+id/xiaoshuo_jianjie"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:text="加入书单"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_shujia"
+        android:textSize="16sp"
+        android:layout_alignBottom="@+id/xiaoshuo_img"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="0dp" />
+
+</RelativeLayout>
