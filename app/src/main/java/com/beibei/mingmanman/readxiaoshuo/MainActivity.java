@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
     public synchronized  Integer get_web_count(){  return zhandian_jishu;  }
     public synchronized  void set_web_count(){ zhandian_jishu++;  }
     public synchronized  void set_zhandian_list(Zhandian_info z){
-        zhandian_list.add(z);
+        //zhandian_list.add(z);
         Zhandian_info zd_info = cupboard().withDatabase(db).query(Zhandian_info.class).withSelection("zhandian_ming = ?", z.zhandian_ming).get();
         if (zd_info == null) {
             cupboard().withDatabase(db).put(z);
@@ -180,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
         mCompositeSubscription = new CompositeSubscription();
         QueryResultIterable<Zhandian_info> iterable =
                 cupboard().withDatabase(db).query(Zhandian_info.class).query();
+        zhandian_jishu=0;
         for (Zhandian_info zd : iterable) {
             mCompositeSubscription.add(Observable.just(zd)
                     .map(s->getwebpage(s))
@@ -194,10 +195,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCompleted() {
                 //   mCompositeSubscription.unsubscribe();
+                setZhandianData();
             }
             @Override
             public void onError(Throwable throwable) {
-
+                setZhandianData();
             }
             @Override
             public void onNext(Zhandian_info s) {
@@ -266,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
         zhandian.add("三七中文|http://www.37zw.com|http://zhannei.baidu.com/cse/search?s=2041213923836881982&q=");
         zhandian.add("新八一中文网|http://www.x81zw.com|http://zhannei.baidu.com/cse/search?s=2988433831094058597&q=");
         zhandian.add("八一中文网|http://www.81zw.com|http://zhannei.baidu.com/cse/search?s=3975864432584690275&q=");
-        //zhandian.add("读零零|http://www.du00.cc|http://zhannei.baidu.com/cse/search?s=6162748167861710953&q=");
+
     }
 //==========================================================================================================================
 
@@ -279,10 +281,23 @@ public class MainActivity extends AppCompatActivity {
     private void initData() {
         dbHelper = new XiaoshuoDatabaseHelper(MainActivity.this);
         db = dbHelper.getWritableDatabase();
-        String selectionString = "list_order>0 order by list_order";
+        setXiaoshuoData();
+        setZhandianData();
+    }
+    private  void setZhandianData(){
+        String selectionString = "sudu_paixv>=0 order by sudu_paixv";
+        QueryResultIterable<Zhandian_info> iterable =
+                cupboard().withDatabase(db).query(Zhandian_info.class).withSelection(selectionString).query();
+        zhandian_list.clear();
+        for (Zhandian_info bbb : iterable) {
+         Log.i("testcrab",bbb.zhandian_ming);
+            zhandian_list.add(bbb);
+        }
+    }
+    private void setXiaoshuoData() {
+        String selectionString = "list_order>=0 order by list_order";
         QueryResultIterable<Xiaoshuo_info> iterable =
                 cupboard().withDatabase(db).query(Xiaoshuo_info.class).withSelection(selectionString).query();
-        List<Xiaoshuo_info> list = new ArrayList<Xiaoshuo_info>();
         mDatas.clear();
         xiaoshu_link_list.clear();
         for (Xiaoshuo_info bbb : iterable) {

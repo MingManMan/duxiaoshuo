@@ -29,7 +29,7 @@ class Geng_xin_info{
     public Integer zhangjie_shu=0;
 }
 
-interface XiaoshuoInfterface {
+interface ZhandianInfterface {
 
     void getmulu(Subscriber<List<Mulu_info>> subscriber, String url);
     void getxiaoshuoneirong(Subscriber<String> s_obj, String url);

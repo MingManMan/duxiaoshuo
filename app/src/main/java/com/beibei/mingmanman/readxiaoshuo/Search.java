@@ -1,7 +1,6 @@
 package com.beibei.mingmanman.readxiaoshuo;
 
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -122,7 +121,7 @@ public class Search extends AppCompatActivity {
     }
 
     public void search_rxjava(String s){
-        XiaoshuoInfterface xiaoshuo = new Xiaoshuo1();
+        ZhandianInfterface xiaoshuo = new ZhandianB();
         xiaoshuo.getsearch(CreatSubscriber(),s );
     }
 

@@ -3,7 +3,6 @@ package com.beibei.mingmanman.readxiaoshuo;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -13,22 +12,17 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.beibei.mingmanman.readxiaoshuo.model.Xiaoshuo_info;
-import com.beibei.mingmanman.readxiaoshuo.model.Zhandian_info;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import nl.qbusict.cupboard.QueryResultIterable;
 import rx.Subscriber;
-
-import static nl.qbusict.cupboard.CupboardFactory.cupboard;
 
 public class MuluActivity extends AppCompatActivity {
     private Button shang_yi_ye, xia_yi_ye;
@@ -175,7 +169,8 @@ public class MuluActivity extends AppCompatActivity {
 
     private void get_xiaoshuo_mulu_rxjava() {
         //启动线程获得目录页面内容
-        XiaoshuoInfterface xiaoshuo1 = new Xiaoshuo1(xiaoshuo);
+        //ZhandianInfterface xiaoshuo1 = new Zhandian1(xiaoshuo);
+        ZhandianInfterface xiaoshuo1 = new ZhandianB();
         xiaoshuo1.getmulu(S_obj, xiaoshuo_mulu_dizhi);
         //xiaoshuo1.getmulu(S_obj, xiaoshuo);
     }
