@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
         //如果是继承Activity就应该调用
         //requestWindowFeature(Window.FEATURE_NO_TITLE) ）；
         setContentView(R.layout.activity_main);
-
         initData();//正在阅读小说的信息加载
         initview();
         checkupdate();
@@ -112,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.make(mycontainer, "SnackbarTest", Snackbar.LENGTH_LONG).show();
                   //  Toast.makeText(MainActivity.this, R.string.menu_notifications, Toast.LENGTH_SHORT).show();
                 } else if (menuItemId == R.id.action_item1) {//添加站点信息
+                    //更新站点列表
                                 updatezhandian_info();
 
                     Toast.makeText(MainActivity.this, "站点信息添加成功", Toast.LENGTH_SHORT).show();
@@ -120,10 +120,13 @@ public class MainActivity extends AppCompatActivity {
                     db = dbHelper.getWritableDatabase();
                     QueryResultIterable<Zhandian_info> iterable =
                             cupboard().withDatabase(db).query(Zhandian_info.class).query();
+                    Log.i("testcrab","开始站点测试");
                     for (Zhandian_info bbb : iterable) {
                         Log.i("testcrab", bbb.zhandian_ming + "|" + bbb.zhandian_url + "|" + bbb.search_url);
                     }
                 } else if (menuItemId == R.id.action_item3) {//站点反应速度检查
+                    //========================站点反应速度检查======================================
+                    Log.i("testcrab", "开始站点测试");
                     checkwebsite();
                 }
                 return true;
@@ -161,12 +164,20 @@ public class MainActivity extends AppCompatActivity {
     //对付同步问题
     public synchronized  Integer get_web_count(){  return zhandian_jishu;  }
     public synchronized  void set_web_count(){ zhandian_jishu++;  }
-    public synchronized  void set_zhandian_list(Zhandian_info z){  zhandian_list.add(z);  }
+    public synchronized  void set_zhandian_list(Zhandian_info z){
+        zhandian_list.add(z);
+        Zhandian_info zd_info = cupboard().withDatabase(db).query(Zhandian_info.class).withSelection("zhandian_ming = ?", z.zhandian_ming).get();
+        if (zd_info == null) {
+            cupboard().withDatabase(db).put(z);
+        } else {
+            zd_info.sudu_paixv=z.sudu_paixv;
+            cupboard().withDatabase(db).put(zd_info);
+        }
+    }
 
     //====================================站点活性检查==============================================
     private void checkwebsite() {
         mCompositeSubscription = new CompositeSubscription();
-
         QueryResultIterable<Zhandian_info> iterable =
                 cupboard().withDatabase(db).query(Zhandian_info.class).query();
         for (Zhandian_info zd : iterable) {
@@ -192,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
             public void onNext(Zhandian_info s) {
                 Log.i("testcrab",s.zhandian_ming);
                 if(s.sudu_paixv>-1){
-                    if(get_web_count()<7){  //6个站点
+                    if(get_web_count()<10){  //6个站点
                         set_web_count();
                         s.sudu_paixv=get_web_count();
                         set_zhandian_list(s);
@@ -246,12 +257,16 @@ public class MainActivity extends AppCompatActivity {
         zhandian.clear();
         zhandian.add("武林中文网|http://www.50zw.la|http://zhannei.baidu.com/cse/search?s=13049992925692302651&q=");
         zhandian.add("书客小说网|http://www.shuke.la|http://zhannei.baidu.com/cse/search?s=12268274549339958031&q=");
-        zhandian.add("读零零|http://www.du00.cc|http://zhannei.baidu.com/cse/search?s=6162748167861710953&q=");
-        zhandian.add("笔趣阁|http://www.qu.la|http://zhannei.baidu.com/cse/search?s=7138806708853866527&q=");
+        zhandian.add("笔趣阁1|http://www.qu.la|http://zhannei.baidu.com/cse/search?s=7138806708853866527&q=");
+        zhandian.add("笔趣阁2|http://www.biquge.tw|http://zhannei.baidu.com/cse/search?s=16829369641378287696&q=");
         zhandian.add("爱上书屋|http://www.23sw.net|http://zhannei.baidu.com/cse/search?s=3762194758325881047&q=");
         zhandian.add("盗梦人小说网|http://www.daomengren.com|http://zhannei.baidu.com/cse/search?s=12191870739823161026&q=");
         zhandian.add("品书网|http://www.vodtw.com|http://zhannei.baidu.com/cse/search?s=1101330821780029220&q=");
         zhandian.add("一本读|http://www.ybdu.com|http://zhannei.baidu.com/cse/search?s=6637491585052650179&q=");
+        zhandian.add("三七中文|http://www.37zw.com|http://zhannei.baidu.com/cse/search?s=2041213923836881982&q=");
+        zhandian.add("新八一中文网|http://www.x81zw.com|http://zhannei.baidu.com/cse/search?s=2988433831094058597&q=");
+        zhandian.add("八一中文网|http://www.81zw.com|http://zhannei.baidu.com/cse/search?s=3975864432584690275&q=");
+        //zhandian.add("读零零|http://www.du00.cc|http://zhannei.baidu.com/cse/search?s=6162748167861710953&q=");
     }
 //==========================================================================================================================
 

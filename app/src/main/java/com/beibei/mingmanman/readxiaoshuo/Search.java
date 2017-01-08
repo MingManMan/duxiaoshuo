@@ -122,8 +122,8 @@ public class Search extends AppCompatActivity {
     }
 
     public void search_rxjava(String s){
-        XiaoshuoInfterface xiaoshuo1 = new Xiaoshuo1();
-        xiaoshuo1.getsearch(CreatSubscriber(),s );
+        XiaoshuoInfterface xiaoshuo = new Xiaoshuo1();
+        xiaoshuo.getsearch(CreatSubscriber(),s );
     }
 
 }
