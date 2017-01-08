@@ -25,8 +25,8 @@ import rx.schedulers.Schedulers;
  */
 public class Xiaoshuo1 implements XiaoshuoInfterface {
     private Xiaoshuo_info xiaoshuo;
-    private String zhandian_ming = "笔趣阁";
-    private String base_search_url = "http://zhannei.baidu.com/cse/search?s=920895234054625192&q=";
+    private String zhandian_ming = "笔趣阁2";
+    private String base_search_url = "http://zhannei.baidu.com/cse/search?s=16829369641378287696&q=";
     List<Mulu_info> mulu_list = new ArrayList<Mulu_info>();
 
     public Xiaoshuo1() {
