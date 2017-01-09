@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -203,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
             }
             @Override
             public void onNext(Zhandian_info s) {
-                Log.i("testcrab",s.zhandian_ming);
+                Log.i("testcrab","------>"+s.zhandian_ming);
                 if(s.sudu_paixv>-1){
                     if(get_web_count()<10){  //6个站点
                         set_web_count();
@@ -290,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
                 cupboard().withDatabase(db).query(Zhandian_info.class).withSelection(selectionString).query();
         zhandian_list.clear();
         for (Zhandian_info bbb : iterable) {
-         Log.i("testcrab",bbb.zhandian_ming);
+        // Log.i("testcrab",bbb.zhandian_ming);
             zhandian_list.add(bbb);
         }
     }
