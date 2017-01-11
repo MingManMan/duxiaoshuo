@@ -10,11 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.OrientationHelper;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
@@ -58,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private XiaoshuoDatabaseHelper dbHelper;
     private CompositeSubscription mCompositeSubscription;
     private Toolbar toolbar;
-
+    private String Xuanzhe_zhandian="笔趣阁2";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,7 +105,9 @@ public class MainActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 int menuItemId = item.getItemId();
                 if (menuItemId == R.id.action_search) {  //搜索
+                    Log.i("testcrab","mainActivity--- R.id.action_search"+Xuanzhe_zhandian);
                     Intent intent3 = new Intent();
+                    intent3.putExtra("Xuanzhe_zhandian", Xuanzhe_zhandian);  //放入数据
                     intent3.setClass(MainActivity.this, Search.class);
                     startActivity(intent3);  //开始跳转
 
@@ -127,6 +132,29 @@ public class MainActivity extends AppCompatActivity {
                     //========================站点反应速度检查======================================
                     Log.i("testcrab", "开始站点测试");
                     checkwebsite();
+                }
+                //========================切换数据源======================================
+                else if (menuItemId == R.id.action_zhandian1) {//笔趣阁1
+                    Xuanzhe_zhandian="笔趣阁1";
+                    switchzhandian(Xuanzhe_zhandian);
+                    Snackbar.make(mycontainer, "笔趣阁1", Snackbar.LENGTH_LONG).show();
+
+                }
+                else if (menuItemId == R.id.action_zhandian2) {//笔趣阁2
+                    Xuanzhe_zhandian="笔趣阁2";
+                    Snackbar.make(mycontainer, "笔趣阁2", Snackbar.LENGTH_LONG).show();
+                }
+                else if (menuItemId == R.id.action_zhandian3) {//爱上书屋
+                    Xuanzhe_zhandian="爱上书屋";
+                    Snackbar.make(mycontainer, "爱上书屋", Snackbar.LENGTH_LONG).show();
+                }
+                else if (menuItemId == R.id.action_zhandian4) {//新八一中文网
+                    //Xuanzhe_zhandian="新八一中文网";
+                    Snackbar.make(mycontainer, "新八一中文网", Snackbar.LENGTH_LONG).show();
+                }
+                else if (menuItemId == R.id.action_zhandian5) {//八一中文网
+                    //Xuanzhe_zhandian="八一中文网";
+                    Snackbar.make(mycontainer, "八一中文网", Snackbar.LENGTH_LONG).show();
                 }
                 return true;
             }
@@ -160,6 +188,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void switchzhandian(String xuanzhe_zhandian) {
+
+    }
+
+
     //对付同步问题
     public synchronized  Integer get_web_count(){  return zhandian_jishu;  }
     public synchronized  void set_web_count(){ zhandian_jishu++;  }
@@ -309,28 +343,6 @@ public class MainActivity extends AppCompatActivity {
     private void checkupdate() {
 
     }
-
-    private Subscriber<Integer> createSubscriber_update(){
-        return new Subscriber<Integer>(){
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-
-            }
-
-            @Override
-            public void onNext(Integer integer) {
-
-            }
-        };
-    }
-
-
-
     //==================================
     ItemTouchHelper.Callback mItemTouchCallBack = new ItemTouchHelper.Callback() {
         /**

@@ -29,11 +29,17 @@ public class Search extends AppCompatActivity {
     private SearchlistAdapter recycleAdapter;
     private  String keyword="";
     private Toolbar toolbar;
-
+    private String Xuanzhe_zhandian="笔趣阁2";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        Intent intent = this.getIntent();    //获得当前的Intent
+        Bundle bundle = intent.getExtras();  //获得全部数据
+        Xuanzhe_zhandian = bundle.getString("Xuanzhe_zhandian");
+        if(Xuanzhe_zhandian==""){
+            Xuanzhe_zhandian="笔趣阁2";
+        }
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.parseColor("#FFFFFF"));
         toolbar.setNavigationIcon(R.mipmap.ic_arrow_back_white_24dp);//设置导航栏图标
@@ -121,8 +127,10 @@ public class Search extends AppCompatActivity {
     }
 
     public void search_rxjava(String s){
-        ZhandianInfterface xiaoshuo = new ZhandianB();
+        //ZhandianInfterface xiaoshuo = new ZhandianC();
+        Zhandian_Maker zm=new Zhandian_Maker();
+        Log.i("testcrab","search.java --search_rxjava:"+Xuanzhe_zhandian);
+        ZhandianInfterface xiaoshuo = zm.maker_zhandian(Xuanzhe_zhandian);
         xiaoshuo.getsearch(CreatSubscriber(),s );
     }
-
 }

@@ -12,6 +12,7 @@
     <string name="item_01">更新站点表</string>
     <string name="item_02">数据库测试</string>
     <string name="item_03">站点活性检查</string>
+    <string name="item_04">更换数据源</string>
     <string name="simple_navigation_drawer">SimpleNavigationDrawer</string>
     <string name="simple_drawer">SimpleDrawer</string>
     <string name="open">Open</string>

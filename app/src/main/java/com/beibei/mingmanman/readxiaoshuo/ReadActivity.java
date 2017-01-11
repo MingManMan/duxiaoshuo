@@ -58,7 +58,7 @@ public class ReadActivity extends AppCompatActivity {
     }
     public void get_zhangjie_leirong_rxjava( String url){
         Log.i("testcrab","ReadActivity get_zhangjie_leirong_rxjava url:"+url);
-        ZhandianInfterface xiaoshuo1 = new ZhandianB();
+        ZhandianInfterface xiaoshuo1 = new ZhandianC();
         xiaoshuo1.getxiaoshuoneirong(CreateSubscriber(), url);
     }
 

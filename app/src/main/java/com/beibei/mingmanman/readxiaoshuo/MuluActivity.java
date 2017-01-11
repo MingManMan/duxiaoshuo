@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.beibei.mingmanman.readxiaoshuo.model.Xiaoshuo_info;
+import com.beibei.mingmanman.readxiaoshuo.model.Zhandian_info;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -170,7 +171,9 @@ public class MuluActivity extends AppCompatActivity {
     private void get_xiaoshuo_mulu_rxjava() {
         //启动线程获得目录页面内容
         //ZhandianInfterface xiaoshuo1 = new Zhandian1(xiaoshuo);
-        ZhandianInfterface xiaoshuo1 = new ZhandianB();
+        //ZhandianInfterface xiaoshuo1 = new ZhandianC();
+        Zhandian_Maker zm=new Zhandian_Maker();
+        ZhandianInfterface xiaoshuo1 = zm.maker_zhandian(xiaoshuo.zhandian_ming);
         xiaoshuo1.getmulu(S_obj, xiaoshuo_mulu_dizhi);
         //xiaoshuo1.getmulu(S_obj, xiaoshuo);
     }
