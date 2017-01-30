@@ -256,6 +256,7 @@ class GradleIncBuildInvoker(android_tools.AndroidIncBuildInvoker):
                                        and self._config['retrolambda'][self._name]['enabled']
         self._is_databinding_enabled = 'databinding_modules' in self._config and self._name in self._config[
             'databinding_modules']
+        self._is_dagger_enabled = 'apt_libraries' in self._config and self._config['apt_libraries']['dagger']
         self._apt_output_dir = None
         for mname in self._all_module_info.keys():
             if mname in self._config['project_source_sets']:
@@ -430,6 +431,11 @@ class GradleIncBuildInvoker(android_tools.AndroidIncBuildInvoker):
 
         aapt_args.append('--ignore-assets')
         aapt_args.append('public_id.xml:public.xml:*.bak:.*')
+
+        if 'ignore_resource_ids' in self._config and len(self._config['ignore_resource_ids']) > 0 and not is_windows_system():
+            aapt_args.append('--ignore-ids')
+            aapt_args.append(':'.join(self._config['ignore_resource_ids']))
+
         return aapt_args, final_changed_list
 
     def recover_original_file_path(self):
@@ -634,33 +640,61 @@ class GradleIncBuildInvoker(android_tools.AndroidIncBuildInvoker):
         return False
 
     def _generate_java_compile_args(self, extra_javac_args_enabled=False):
-        javacargs = [self._javac, '-encoding', 'UTF-8', '-g']
+        javacargs = [self._javac]
+        arguments = ['-encoding', 'UTF-8', '-g']
         if not self._is_retrolambda_enabled:
-            javacargs.extend(['-target', '1.7', '-source', '1.7'])
+            arguments.extend(['-target', '1.7', '-source', '1.7'])
 
-        javacargs.append('-cp')
-        javacargs.append(os.pathsep.join(self._classpaths))
+        arguments.append('-cp')
+        arguments.append(os.pathsep.join(self._classpaths))
 
         for fpath in self._changed_files['src']:
-            javacargs.append(fpath)
+            arguments.append(fpath)
 
         if extra_javac_args_enabled:
             if 'apt' in self._changed_files:
                 for fpath in self._changed_files['apt']:
-                    javacargs.append(fpath)
-                files = self._get_apt_related_files()
-                for fpath in files:
-                    if fpath and os.path.exists(fpath) and fpath not in self._changed_files['src'] and fpath not in \
-                            self._changed_files['apt']:
-                        self.debug('add apt related file: {}'.format(fpath))
-                        javacargs.append(fpath)
-            javacargs.extend(self._extra_javac_args)
+                    arguments.append(fpath)
 
-        javacargs.append('-d')
-        javacargs.append(self._finder.get_patch_classes_cache_dir())
+            filter_tags = []
+            if self._is_databinding_enabled:
+                filter_tags.extend(['BindingAdapter', 'BindingConversion', 'Bindable'])
+
+            if self._is_dagger_enabled:
+                filter_tags.extend(['DaggerComponent', 'DaggerModule'])
+
+            files = self._get_apt_related_files(filter_tags=filter_tags)
+            for fpath in files:
+                if fpath and os.path.exists(fpath) and fpath not in self._changed_files['src']:
+                    if 'apt' in self._changed_files and fpath in self._changed_files['apt']:
+                        continue
+                    self.debug('add apt related file: {}'.format(fpath))
+                    arguments.append(fpath)
+
+            arguments.extend(self._extra_javac_args)
+
+        arguments.append('-d')
+        arguments.append(self._finder.get_patch_classes_cache_dir())
+
+        # ref: https://support.microsoft.com/en-us/kb/830473
+        if is_windows_system():
+            arguments_length = sum(map(len, arguments))
+            if arguments_length > 8000:
+                argument_file_path = os.path.join(self._finder.get_module_cache_dir(), 'javac_args_file')
+                self.debug('arguments length: {} > 8000, save args to {}'.format(arguments_length, argument_file_path))
+
+                if os.path.exists(argument_file_path):
+                    os.remove(argument_file_path)
+
+                arguments_content = ' '.join(arguments)
+                self.debug('javac arguments: ' + arguments_content)
+                write_file_content(argument_file_path, arguments_content)
+                arguments = ['@{}'.format(argument_file_path)]
+
+        javacargs.extend(arguments)
         return javacargs
 
-    def _get_apt_related_files(self):
+    def _get_apt_related_files(self, filter_tags=None):
         path = self._get_apt_related_files_cache_path()
         if os.path.exists(path):
             return load_json_cache(path)
@@ -670,9 +704,14 @@ class GradleIncBuildInvoker(android_tools.AndroidIncBuildInvoker):
                 info_cache = load_json_cache(info_path)
                 related_files = []
                 for anno, files in info_cache.iteritems():
+                    if filter_tags and anno not in filter_tags:
+                        self.debug('ignore annotation: {}'.format(anno))
+                        continue
+
                     for info in files:
-                        if 'java_path' in info and info['java_path']:
-                            related_files.append(info['java_path'])
+                        if info['module'] == self._name or info['module'] in self._module_info['local_module_dep']:
+                            if 'java_path' in info and info['java_path']:
+                                related_files.append(info['java_path'])
                 write_json_cache(self._get_apt_related_files_cache_path(), related_files)
                 return related_files
         return []
@@ -702,28 +741,24 @@ class GradleIncBuildInvoker(android_tools.AndroidIncBuildInvoker):
                         '-Dretrolambda.outputDir={}'.format(target_dir)]
 
             if lambda_config['supportIncludeFiles']:
+                files_stat_path = os.path.join(self._cache_dir, self._name, 'lambda_files_stat.json')
+
                 include_files = []
-                classes = []
+                if os.path.exists(files_stat_path):
+                    files_stat = load_json_cache(files_stat_path)
+                else:
+                    files_stat = {}
+
                 for dirpath, dirnames, files in os.walk(target_dir):
                     for fn in files:
-                        if fn.endswith('.class'):
-                            classes.append(os.path.relpath(os.path.join(dirpath, fn), target_dir))
-
-                src_dirs = self._config['project_source_sets'][self._name]['main_src_directory']
-                for fpath in self._changed_files['src']:
-                    short_path = fpath.replace('.java', '.class')
-                    for src_dir in src_dirs:
-                        if src_dir in short_path:
-                            short_path = os.path.relpath(fpath, src_dir).replace('.java', '')
-                            break
-
-                    for clazz in classes:
-                        if short_path + '.class' in clazz or short_path + '$' in clazz or 'R.class' in clazz \
-                                or 'R$' in clazz or short_path + '_' in clazz:
-                            include_file = os.path.join(target_dir, clazz)
-                            if os.path.exists(include_file):
-                                self.debug('incremental build lambda file: {}'.format(include_file))
-                                include_files.append(include_file)
+                        fpath = os.path.join(dirpath, fn)
+                        if fpath not in files_stat:
+                            include_files.append(fpath)
+                            self.debug('incremental build new lambda file: {}'.format(fpath))
+                        else:
+                            if os.path.getmtime(fpath) > files_stat[fpath]['mtime']:
+                                include_files.append(fpath)
+                                self.debug('incremental build lambda file: {}'.format(fpath))
 
                 include_files_param = os.pathsep.join(include_files)
                 if len(include_files_param) > 3496:
@@ -753,6 +788,14 @@ class GradleIncBuildInvoker(android_tools.AndroidIncBuildInvoker):
 
             if code != 0:
                 raise FreelineException('retrolambda compile failed.', '{}\n{}'.format(output, err))
+
+            if lambda_config['supportIncludeFiles']:
+                for fpath in include_files:
+                    if fpath not in files_stat:
+                        files_stat[fpath] = {}
+                    files_stat[fpath]['mtime'] = os.path.getmtime(fpath)
+                write_json_cache(files_stat_path, files_stat)
+                self.debug('save lambda files stat to {}'.format(files_stat_path))
 
     def __save_parms_to_file(self, path, params):
         if os.path.exists(path):

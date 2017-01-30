@@ -114,11 +114,11 @@ public class MainActivity extends AppCompatActivity {
                 } else if (menuItemId == R.id.action_notification) {
                     Snackbar.make(mycontainer, "SnackbarTest", Snackbar.LENGTH_LONG).show();
                   //  Toast.makeText(MainActivity.this, R.string.menu_notifications, Toast.LENGTH_SHORT).show();
-                } else if (menuItemId == R.id.action_item1) {//添加站点信息
-                    //更新站点列表
-                                updatezhandian_info();
 
+                } else if (menuItemId == R.id.action_item1) {//添加站点信息
+                    updatezhandian_info();
                     Toast.makeText(MainActivity.this, "站点信息添加成功", Toast.LENGTH_SHORT).show();
+
                 } else if (menuItemId == R.id.action_item2) {//检查数据库内容
                     dbHelper = new XiaoshuoDatabaseHelper(MainActivity.this);
                     db = dbHelper.getWritableDatabase();
@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
                     for (Zhandian_info bbb : iterable) {
                         Log.i("testcrab", bbb.zhandian_ming + "|" + bbb.zhandian_url + "|" + bbb.search_url);
                     }
+
                 } else if (menuItemId == R.id.action_item3) {//站点反应速度检查
                     //========================站点反应速度检查======================================
                     Log.i("testcrab", "开始站点测试");
@@ -301,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
         zhandian.add("三七中文|http://www.37zw.com|http://zhannei.baidu.com/cse/search?s=2041213923836881982&q=");
         zhandian.add("新八一中文网|http://www.x81zw.com|http://zhannei.baidu.com/cse/search?s=2988433831094058597&q=");
         zhandian.add("八一中文网|http://www.81zw.com|http://zhannei.baidu.com/cse/search?s=3975864432584690275&q=");
+        zhandian.add("紫幽阁|http://www.ziyouge.com/|http://zhannei.baidu.com/cse/search?s=8978823581021836093&q=");
 
     }
 //==========================================================================================================================

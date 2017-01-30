@@ -11,7 +11,7 @@
     <string name="zhi_hu">知乎</string>
     <string name="item_01">更新站点表</string>
     <string name="item_02">数据库测试</string>
-    <string name="item_03">站点活性检查</string>
+    <string name="item_03">站点速度检查</string>
     <string name="item_04">更换数据源</string>
     <string name="simple_navigation_drawer">SimpleNavigationDrawer</string>
     <string name="simple_drawer">SimpleDrawer</string>
@@ -19,5 +19,4 @@
     <string name="close">Close</string>
     <string name="sorta">正序</string>
     <string name="sortb">倒序</string>
-
 </resources>
