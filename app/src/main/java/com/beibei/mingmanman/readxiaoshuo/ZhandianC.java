@@ -1,5 +1,7 @@
 package com.beibei.mingmanman.readxiaoshuo;
 
+import android.util.Log;
+
 import com.beibei.mingmanman.readxiaoshuo.model.Zhandian_info;
 
 import org.jsoup.nodes.Document;
@@ -69,6 +71,7 @@ public class ZhandianC extends Base_zhandian implements ZhandianInfterface {
     }
 
     public List<Mulu_info> getmulupage(String url) {
+        Log.i("testcrab","站点C---------getmulupage函数");
         List<Mulu_info> tmp_list = new ArrayList<Mulu_info>();
         Document doc = getweb(url);
         if (doc != null) {
@@ -101,7 +104,8 @@ public class ZhandianC extends Base_zhandian implements ZhandianInfterface {
                 .subscribe(subscriber);
     }
 
-    public String getneirongpage(String url) {
+        public String getneirongpage(String url) {
+            Log.i("testcrab","站点C---------getneirongpage");
         String neirong = "";
         Document doc = getweb(url);
         if (doc != null) {

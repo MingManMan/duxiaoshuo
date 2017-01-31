@@ -1,5 +1,7 @@
 package com.beibei.mingmanman.readxiaoshuo;
 
+import android.util.Log;
+
 import com.beibei.mingmanman.readxiaoshuo.model.Zhandian_info;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,7 +23,6 @@ public class ZhandianA extends Base_zhandian implements ZhandianInfterface {
     private String zhandian_ming = "笔趣阁1";
     private String base_search_url = "http://zhannei.baidu.com/cse/search?s=7138806708853866527&q=";
     List<Mulu_info> mulu_list = new ArrayList<Mulu_info>();
-
     public ZhandianA() {
         this.mulu_list = new ArrayList<Mulu_info>();
     }
@@ -66,6 +67,7 @@ public class ZhandianA extends Base_zhandian implements ZhandianInfterface {
     }
 
     public List<Mulu_info> getmulupage(String url) {
+        Log.i("testcrab","站点A---------getmulupage函数");
         List<Mulu_info> tmp_list = new ArrayList<Mulu_info>();
         Document doc = getweb(url);
         if (doc != null) {
@@ -99,6 +101,7 @@ public class ZhandianA extends Base_zhandian implements ZhandianInfterface {
     }
 
     public String getneirongpage(String url) {
+        Log.i("testcrab","站点A---------getneirongpage");
         String neirong = "";
         Document doc = getweb(url);
         if (doc != null) {

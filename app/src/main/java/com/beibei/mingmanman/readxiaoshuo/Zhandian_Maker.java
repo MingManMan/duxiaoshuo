@@ -18,7 +18,6 @@ public class Zhandian_Maker {
                 break;
             case "笔趣阁2":
                 s = new ZhandianC();
-
                 break;
             case "新八一中文网":
                 break;

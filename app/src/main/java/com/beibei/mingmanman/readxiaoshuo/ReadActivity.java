@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 
 import android.text.Html;
 
+import com.beibei.mingmanman.readxiaoshuo.model.Xiaoshuo_info;
+
 import rx.Subscriber;
 import rx.Subscription;
 
@@ -31,6 +33,8 @@ public class ReadActivity extends AppCompatActivity {
     Subscription sbtion;
     int all_index=0;
     int xiaoshuolistsize=0;
+    private Xiaoshuo_info xiaoshuo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,11 +61,12 @@ public class ReadActivity extends AppCompatActivity {
         };
     }
     public void get_zhangjie_leirong_rxjava( String url){
-        Log.i("testcrab","ReadActivity get_zhangjie_leirong_rxjava url:"+url);
-        ZhandianInfterface xiaoshuo1 = new ZhandianC();
+        Log.i("testcrab","ReadActivity-------------get_zhangjie_leirong_rxjava url:"+url);
+        Zhandian_Maker zm=new Zhandian_Maker();
+        ZhandianInfterface xiaoshuo1 = zm.maker_zhandian(xiaoshuo.zhandian_ming);
+        //ZhandianInfterface xiaoshuo1 = new ZhandianC();
         xiaoshuo1.getxiaoshuoneirong(CreateSubscriber(), url);
     }
-
     String htmlreplace(String in_string) {
         Pattern pattern = Pattern.compile("<br />");
         Matcher matcher = pattern.matcher(in_string);
@@ -98,9 +103,6 @@ public class ReadActivity extends AppCompatActivity {
                 case R.id.btn_prepage:
                     all_index=all_index-1;
                     if(all_index>=0) {
-                       // url = linkaddress.get(all_index);
-                       /* url = baselink + linkaddress.get(all_index);
-                        new Thread(runnable).start();*/
                         get_zhangjie_leirong_rxjava( baselink + linkaddress.get(all_index));
                     }
                     break;
@@ -109,9 +111,6 @@ public class ReadActivity extends AppCompatActivity {
                 case R.id.btn_nextpage:
                     all_index=all_index+1;
                     if(all_index<xiaoshuolistsize) {
-                       // url = linkaddress.get(all_index);
-                        /*url = baselink + linkaddress.get(all_index);
-                        new Thread(runnable).start();*/
                         get_zhangjie_leirong_rxjava( baselink + linkaddress.get(all_index));
                     }
                     break;
@@ -124,6 +123,7 @@ public class ReadActivity extends AppCompatActivity {
         baselink = bundle.getString("baselink");  //获得名为name的值
         all_index = bundle.getInt("all_index");
         linkaddress = (List<String>) bundle.getSerializable("xiaoshuo_mulu_link");
+        xiaoshuo = bundle.getParcelable("xiaoshuo");
         xiaoshuolistsize=linkaddress.size();
 
     }

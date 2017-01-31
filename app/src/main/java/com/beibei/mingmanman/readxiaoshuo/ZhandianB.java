@@ -71,6 +71,7 @@ public class ZhandianB extends Base_zhandian implements ZhandianInfterface {
     }
 
     public List<Mulu_info> getmulupage(String url) {
+        Log.i("testcrab","站点B---------getmulupage函数");
         List<Mulu_info> tmp_list = new ArrayList<Mulu_info>();
         Log.i("testcrab","url为"+url);
         Document doc = getweb(url);
@@ -108,9 +109,11 @@ public class ZhandianB extends Base_zhandian implements ZhandianInfterface {
     }
 
     public String getneirongpage(String url) {
+        Log.i("testcrab","站点B---------getneirongpage");
         String neirong = "";
         Document doc = getweb(url);
         if (doc != null) {
+
             Element l1 = doc.select("div#booktext").first();
             neirong = l1.html();
         } else {

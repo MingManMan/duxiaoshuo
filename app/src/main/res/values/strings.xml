@@ -19,4 +19,5 @@
     <string name="close">Close</string>
     <string name="sorta">正序</string>
     <string name="sortb">倒序</string>
+    <string name="my_switch">换站点</string>
 </resources>

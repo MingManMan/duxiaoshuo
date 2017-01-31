@@ -34,24 +34,23 @@ public class Search extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        Intent intent = this.getIntent();    //获得当前的Intent
-        Bundle bundle = intent.getExtras();  //获得全部数据
-        Xuanzhe_zhandian = bundle.getString("Xuanzhe_zhandian");
-        if(Xuanzhe_zhandian==""){
-            Xuanzhe_zhandian="笔趣阁2";
-        }
+
+        initdata();
+
+        //toolbar设置
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.parseColor("#FFFFFF"));
         toolbar.setNavigationIcon(R.mipmap.ic_arrow_back_white_24dp);//设置导航栏图标
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {//返回主界面
             @Override
             public void onClick(View v) {
-                Toast.makeText(Search.this, "click 返回 item", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 intent.setClass(Search.this, MainActivity.class);
                 startActivity(intent);  //开始跳转
             }
         });
+
+       //RecyclerView设置
         searchinfolist = new ArrayList<Searchinfo>();
         lv = (RecyclerView) findViewById(R.id.lv); //展现list
         mLayoutManager = new GridLayoutManager(this, 1, OrientationHelper.VERTICAL, false);
@@ -61,12 +60,9 @@ public class Search extends AppCompatActivity {
         lv.setItemAnimator(new DefaultItemAnimator());
         lv.addItemDecoration(new DividerGridItemDecoration(this));
         recycleAdapter.setOnItemClickListener(new SearchlistAdapter.OnItemClickListener() {
-
             @Override
             public void onItemClick(View view, int position) {
-
                 Toast.makeText(Search.this, "click 11111" + position + " item", Toast.LENGTH_SHORT).show();
-
             }
 
             @Override
@@ -75,17 +71,16 @@ public class Search extends AppCompatActivity {
             }
         });
 
+        //搜索控件设置
         sv = (SearchView) findViewById(R.id.search);
-        //设置默认是否缩小为图标
+        //------设置默认是否缩小为图标
         sv.setIconifiedByDefault(false);
-        //是否显示search按钮
+        //------是否显示search按钮
         sv.setSubmitButtonEnabled(true);
-
-        //设置隐藏左边搜索图标
+        //------设置隐藏左边搜索图标
         int magId = getResources().getIdentifier("android:id/search_mag_icon", null, null);
         ImageView magImage = (ImageView) sv.findViewById(magId);
         magImage.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
-
         magId=getResources().getIdentifier("android:id/search_go_btn", null, null);
         ImageView btnimage=(ImageView)sv.findViewById(magId);
         btnimage.setImageResource(R.mipmap.ic_search_white_24dp);
@@ -104,6 +99,15 @@ public class Search extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    private void initdata() {
+        Intent intent = this.getIntent();    //获得当前的Intent
+        Bundle bundle = intent.getExtras();  //获得全部数据
+        Xuanzhe_zhandian = bundle.getString("Xuanzhe_zhandian");  //获得目前要求的搜索站点名
+        if(Xuanzhe_zhandian==""){
+            Xuanzhe_zhandian="笔趣阁2";
+        }
     }
 
     //===================================================================

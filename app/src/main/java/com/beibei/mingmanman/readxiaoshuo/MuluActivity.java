@@ -3,6 +3,7 @@ package com.beibei.mingmanman.readxiaoshuo;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -29,6 +31,7 @@ public class MuluActivity extends AppCompatActivity {
     private Button shang_yi_ye, xia_yi_ye;
     private ListView lv;
     List<String> mDatas = new ArrayList<String>();
+    private LinearLayout mycontainer;
     String xiaoshuo_ming, xiaoshuo_mulu_dizhi, baselink;
     Integer xiaoshuo_ming_postion = 0;
     private List<String> xiaoshuo_address, xiaoshuo_mulu_show, xiaoshuo_mulu_link, adapter_show;
@@ -51,7 +54,7 @@ public class MuluActivity extends AppCompatActivity {
         get_mulu();
     }
     private void initView() {
-
+        mycontainer=(LinearLayout) findViewById(R.id.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         // 如果你想修改标题和子标题的字体大小、颜色等，可以调用 setTitleTextColor 、
         toolbar.setTitleTextColor(Color.parseColor("#FFFFFF"));
@@ -79,11 +82,15 @@ public class MuluActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 int menuItemId = item.getItemId();
+
                 if (menuItemId == R.id.action_sort) {  //排序
                     Collections.reverse(xiaoshuo_mulu_show);
                     Collections.reverse(xiaoshuo_mulu_link);
                     Collections.reverse(adapter_show);
                     adapter.notifyDataSetChanged();
+                }
+                else if (menuItemId == R.id.action_switch) {
+                    Snackbar.make(mycontainer, "SnackbarTest", Snackbar.LENGTH_LONG).show();
                 }
                 return true;
             }
@@ -109,6 +116,7 @@ public class MuluActivity extends AppCompatActivity {
         intent.putExtra("baselink", baselink);  //放入数据
         intent.putExtra("all_index", all_index);  //放入数据,连接位置
         intent.putExtra("xiaoshuo_mulu_link", (Serializable) xiaoshuo_mulu_link);
+        intent.putExtra("xiaoshuo", xiaoshuo);  //放入数据
         intent.setClass(MuluActivity.this, ReadActivity.class);
         startActivity(intent);  //开始跳转
     }

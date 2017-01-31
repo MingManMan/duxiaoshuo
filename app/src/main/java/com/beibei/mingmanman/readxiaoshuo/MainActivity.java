@@ -69,11 +69,13 @@ public class MainActivity extends AppCompatActivity {
         //如果是继承Activity就应该调用
         //requestWindowFeature(Window.FEATURE_NO_TITLE) ）；
         setContentView(R.layout.activity_main);
+
         initData();//正在阅读小说的信息加载
+
         initview();
+
         checkupdate();
     }
-
 
     @Override
     protected void onResume() {
@@ -107,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 if (menuItemId == R.id.action_search) {  //搜索
                     Log.i("testcrab","mainActivity--- R.id.action_search"+Xuanzhe_zhandian);
                     Intent intent3 = new Intent();
-                    intent3.putExtra("Xuanzhe_zhandian", Xuanzhe_zhandian);  //放入数据
+                    intent3.putExtra("Xuanzhe_zhandian", Xuanzhe_zhandian);  //放入目前选择的站点
                     intent3.setClass(MainActivity.this, Search.class);
                     startActivity(intent3);  //开始跳转
 

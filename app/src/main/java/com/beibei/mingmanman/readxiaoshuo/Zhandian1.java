@@ -73,6 +73,7 @@ public class Zhandian1 implements ZhandianInfterface {
     }
 
     public List<Mulu_info> getmulupage(String url) {
+
         List<Mulu_info> tmp_list = new ArrayList<Mulu_info>();
         Document doc = getweb(url);
         if (doc != null) {

@@ -73,9 +73,9 @@ public class SearchlistAdapter extends RecyclerView.Adapter<SearchlistAdapter.Vi
         dbHelper = new XiaoshuoDatabaseHelper(mContext);
         db = dbHelper.getWritableDatabase();
         Xiaoshuo_info xs_info=cupboard().withDatabase(db).query(Xiaoshuo_info.class).withSelection("xiaoshuo_ming = ? and list_order>0",mDatas.get(position).xiaoshuo_name).get();
+        //判断小说是否存在，如果不存在添加按钮动作，否则不添加按钮动作
         if(xs_info==null) {
-        //if(!SPUtils.contains(mContext,mDatas.get(position).xiaoshuo_name)) {
-            holder.add_shujia.setOnClickListener(new View.OnClickListener() {
+                holder.add_shujia.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Xiaoshuo_info xiaoshuo_info = new Xiaoshuo_info();

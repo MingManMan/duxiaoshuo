@@ -6,6 +6,10 @@
         android:icon="@mipmap/sort_white_24dp"
         android:title="@string/sortb"
         app:showAsAction="always|withText"/>
-
+    <item
+        android:id="@+id/action_switch"
+        android:icon="@mipmap/ic_switch_camera_white_24dp"
+        android:title="@string/my_switch"
+        app:showAsAction="always|withText"/>
 
 </menu>
