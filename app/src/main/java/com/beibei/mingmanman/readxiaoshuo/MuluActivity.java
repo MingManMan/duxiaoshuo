@@ -7,7 +7,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,7 +17,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.beibei.mingmanman.readxiaoshuo.model.Xiaoshuo_info;
-import com.beibei.mingmanman.readxiaoshuo.model.Zhandian_info;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,21 +38,24 @@ public class MuluActivity extends AppCompatActivity {
     int all_index = 0;
     private static final int pagecount = 5000;  //每页50条记录
     private int pageindex = 0;//list显示中的起始序号
-    Xiaoshuo_info xiaoshuo;
-
     private Toolbar toolbar;
-    Menu menu;
+    private Myapp myapp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mulu);
+
+        myapp = (Myapp) getApplication();
+
         get_chanshu();
         initData();
         initView();
         get_mulu();
     }
+
     private void initView() {
-        mycontainer=(LinearLayout) findViewById(R.id.activity_main);
+        mycontainer = (LinearLayout) findViewById(R.id.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         // 如果你想修改标题和子标题的字体大小、颜色等，可以调用 setTitleTextColor 、
         toolbar.setTitleTextColor(Color.parseColor("#FFFFFF"));
@@ -65,7 +66,7 @@ public class MuluActivity extends AppCompatActivity {
         // title 、 subtitle ，会发现 app logo 和 title 、 subtitle 的间距比较小，看起来不如
         // 导航图标 与 它们两搭配美观；
         toolbar.setNavigationIcon(R.mipmap.ic_arrow_back_white_24dp);//设置导航栏图标
-        toolbar.setTitle(xiaoshuo.xiaoshuo_ming);//设置主标题
+        toolbar.setTitle(myapp.xiaoshuo.xiaoshuo_ming);//设置主标题
         toolbar.inflateMenu(R.menu.base_toolbar_mulu_menu);//设置右上角的填充菜单
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -89,9 +90,34 @@ public class MuluActivity extends AppCompatActivity {
                     Collections.reverse(adapter_show);
                     adapter.notifyDataSetChanged();
                 }
-                else if (menuItemId == R.id.action_switch) {
-                    Snackbar.make(mycontainer, "SnackbarTest", Snackbar.LENGTH_LONG).show();
+                //---------------------站点切换被点击--------------------------------------
+                /*else if (menuItemId == R.id.action_switch) {
+                    //Snackbar.make(mycontainer, "SnackbarTest", Snackbar.LENGTH_LONG).show();
+
+                }*/
+                //========================切换站点======================================
+                else {
+                    if (menuItemId == R.id.action_zhandian1) {//笔趣阁1
+                        myapp.Xuanzhe_zhandian = "笔趣阁1";
+                        Snackbar.make(mycontainer, "笔趣阁1", Snackbar.LENGTH_LONG).show();
+
+                    } else if (menuItemId == R.id.action_zhandian2) {//笔趣阁2
+                        myapp.Xuanzhe_zhandian = "笔趣阁2";
+                        Snackbar.make(mycontainer, "笔趣阁2", Snackbar.LENGTH_LONG).show();
+                    } else if (menuItemId == R.id.action_zhandian3) {//爱上书屋
+                        myapp.Xuanzhe_zhandian = "爱上书屋";
+                        Snackbar.make(mycontainer, "爱上书屋", Snackbar.LENGTH_LONG).show();
+                    } else if (menuItemId == R.id.action_zhandian4) {//新八一中文网
+                        //Xuanzhe_zhandian="新八一中文网";
+                        Snackbar.make(mycontainer, "新八一中文网", Snackbar.LENGTH_LONG).show();
+                    } else if (menuItemId == R.id.action_zhandian5) {//八一中文网
+                        //Xuanzhe_zhandian="八一中文网";
+                        Snackbar.make(mycontainer, "八一中文网", Snackbar.LENGTH_LONG).show();
+
+                    }
+                    switchzhandian(myapp.Xuanzhe_zhandian);
                 }
+
                 return true;
             }
         });
@@ -111,29 +137,39 @@ public class MuluActivity extends AppCompatActivity {
         });
     }
 
+    private void switchzhandian(String xuanzhe_zhandian) {
+        //查看数据库中是否存在该小说，该站点的记录
+
+        //不存在，调用对应search函数生成记录
+
+        //存在，用记录填充xiaoshuo对象
+
+        //刷新列表
+    }
+
     private void go_dushu() {
         Intent intent = new Intent();
         intent.putExtra("baselink", baselink);  //放入数据
         intent.putExtra("all_index", all_index);  //放入数据,连接位置
         intent.putExtra("xiaoshuo_mulu_link", (Serializable) xiaoshuo_mulu_link);
-        intent.putExtra("xiaoshuo", xiaoshuo);  //放入数据
+        intent.putExtra("xiaoshuo", myapp.xiaoshuo);  //放入数据
         intent.setClass(MuluActivity.this, ReadActivity.class);
         startActivity(intent);  //开始跳转
     }
 
     private void get_chanshu() {
-        Intent intent = this.getIntent();    //获得当前的Intent
+        /*Intent intent = this.getIntent();    //获得当前的Intent
         Bundle bundle = intent.getExtras();  //获得全部数据
-        xiaoshuo = bundle.getParcelable("xiaoshuo");
-        Log.i("testcrab","get_chanshu  获得小说："+xiaoshuo.xiaoshuo_ming);
+        xiaoshuo = bundle.getParcelable("xiaoshuo");*/
+        Log.i("testcrab", "get_chanshu  获得小说：" +myapp.xiaoshuo.xiaoshuo_ming);
     }
 
     private void get_mulu() {
         //根据小说名，获得小说的站点地址
-        baselink = xiaoshuo.xiaoshuo_base_url;
-        xiaoshuo_mulu_dizhi = xiaoshuo.xiaoshuo_mulu_url;
+        baselink = myapp.xiaoshuo.xiaoshuo_base_url;
+        xiaoshuo_mulu_dizhi = myapp.xiaoshuo.xiaoshuo_mulu_url;
         //根据地址获得目录
-        Log.i("testcrab","get_mulu "+xiaoshuo_mulu_dizhi);
+        Log.i("testcrab", "get_mulu " + xiaoshuo_mulu_dizhi);
         get_xiaoshuo_mulu_rxjava();
     }
 
@@ -144,8 +180,8 @@ public class MuluActivity extends AppCompatActivity {
 
         @Override
         public void onError(Throwable e) {
-            Toast.makeText(MuluActivity.this, "error:"+e.toString(), Toast.LENGTH_SHORT).show();
-            Log.i("testcrab",e.toString());
+            Toast.makeText(MuluActivity.this, "error:" + e.toString(), Toast.LENGTH_SHORT).show();
+            Log.i("testcrab", e.toString());
         }
 
         @Override
@@ -178,13 +214,12 @@ public class MuluActivity extends AppCompatActivity {
 
     private void get_xiaoshuo_mulu_rxjava() {
         //启动线程获得目录页面内容
-        //ZhandianInfterface xiaoshuo1 = new Zhandian1(xiaoshuo);
-        //ZhandianInfterface xiaoshuo1 = new ZhandianC();
-        Zhandian_Maker zm=new Zhandian_Maker();
-        ZhandianInfterface xiaoshuo1 = zm.maker_zhandian(xiaoshuo.zhandian_ming);
+        Zhandian_Maker zm = new Zhandian_Maker();
+        ZhandianInfterface xiaoshuo1 = zm.maker_zhandian(myapp.xiaoshuo.zhandian_ming);
         xiaoshuo1.getmulu(S_obj, xiaoshuo_mulu_dizhi);
-        //xiaoshuo1.getmulu(S_obj, xiaoshuo);
+
     }
+
     private List<String> get_xiaoshuo_mulu_dizhi(String xiaoshuo_ming) {
 
         List<String> mulu_dizhi = new ArrayList<String>();

@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private XiaoshuoDatabaseHelper dbHelper;
     private CompositeSubscription mCompositeSubscription;
     private Toolbar toolbar;
-    private String Xuanzhe_zhandian="笔趣阁2";
+    private Myapp myapp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,10 +70,10 @@ public class MainActivity extends AppCompatActivity {
         //requestWindowFeature(Window.FEATURE_NO_TITLE) ）；
         setContentView(R.layout.activity_main);
 
+        myapp=(Myapp)getApplication();
+
         initData();//正在阅读小说的信息加载
-
         initview();
-
         checkupdate();
     }
 
@@ -107,9 +107,9 @@ public class MainActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 int menuItemId = item.getItemId();
                 if (menuItemId == R.id.action_search) {  //搜索
-                    Log.i("testcrab","mainActivity--- R.id.action_search"+Xuanzhe_zhandian);
+                    Log.i("testcrab","mainActivity--- R.id.action_search"+myapp.Xuanzhe_zhandian);
                     Intent intent3 = new Intent();
-                    intent3.putExtra("Xuanzhe_zhandian", Xuanzhe_zhandian);  //放入目前选择的站点
+                    //intent3.putExtra("Xuanzhe_zhandian", Xuanzhe_zhandian);  //放入目前选择的站点
                     intent3.setClass(MainActivity.this, Search.class);
                     startActivity(intent3);  //开始跳转
 
@@ -136,28 +136,29 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("testcrab", "开始站点测试");
                     checkwebsite();
                 }
-                //========================切换数据源======================================
+                //========================切换站点======================================
                 else if (menuItemId == R.id.action_zhandian1) {//笔趣阁1
-                    Xuanzhe_zhandian="笔趣阁1";
-                    switchzhandian(Xuanzhe_zhandian);
+                   myapp.Xuanzhe_zhandian="笔趣阁1";
+                    switchzhandian(myapp.Xuanzhe_zhandian);
                     Snackbar.make(mycontainer, "笔趣阁1", Snackbar.LENGTH_LONG).show();
 
                 }
                 else if (menuItemId == R.id.action_zhandian2) {//笔趣阁2
-                    Xuanzhe_zhandian="笔趣阁2";
+                    myapp.Xuanzhe_zhandian="笔趣阁2";
                     Snackbar.make(mycontainer, "笔趣阁2", Snackbar.LENGTH_LONG).show();
                 }
                 else if (menuItemId == R.id.action_zhandian3) {//爱上书屋
-                    Xuanzhe_zhandian="爱上书屋";
+                    myapp.Xuanzhe_zhandian="爱上书屋";
                     Snackbar.make(mycontainer, "爱上书屋", Snackbar.LENGTH_LONG).show();
                 }
                 else if (menuItemId == R.id.action_zhandian4) {//新八一中文网
-                    //Xuanzhe_zhandian="新八一中文网";
+                    //myapp.Xuanzhe_zhandian="新八一中文网";
                     Snackbar.make(mycontainer, "新八一中文网", Snackbar.LENGTH_LONG).show();
                 }
                 else if (menuItemId == R.id.action_zhandian5) {//八一中文网
-                    //Xuanzhe_zhandian="八一中文网";
+                    //myapp.Xuanzhe_zhandian="八一中文网";
                     Snackbar.make(mycontainer, "八一中文网", Snackbar.LENGTH_LONG).show();
+
                 }
                 return true;
             }
@@ -179,9 +180,10 @@ public class MainActivity extends AppCompatActivity {
         //点击和长按处理
         recycleAdapter.setOnItemClickListener(new MyAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position) { //显示目录
+            //------------显示目录--------------------------------------------
+            public void onItemClick(View view, int position) {
+                myapp.xiaoshuo=mDatas.get(position);
                 Intent intent2 = new Intent();
-                intent2.putExtra("xiaoshuo", mDatas.get(position));  //放入数据
                 intent2.setClass(MainActivity.this, MuluActivity.class);
                 startActivity(intent2);  //开始跳转
             }
@@ -195,7 +197,6 @@ public class MainActivity extends AppCompatActivity {
     private void switchzhandian(String xuanzhe_zhandian) {
 
     }
-
 
     //对付同步问题
     public synchronized  Integer get_web_count(){  return zhandian_jishu;  }
@@ -327,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
                 cupboard().withDatabase(db).query(Zhandian_info.class).withSelection(selectionString).query();
         zhandian_list.clear();
         for (Zhandian_info bbb : iterable) {
-        // Log.i("testcrab",bbb.zhandian_ming);
+
             zhandian_list.add(bbb);
         }
     }

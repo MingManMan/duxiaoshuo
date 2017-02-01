@@ -30,12 +30,14 @@ public class Search extends AppCompatActivity {
     private  String keyword="";
     private Toolbar toolbar;
     private String Xuanzhe_zhandian="笔趣阁2";
+    private Myapp myapp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        initdata();
+        myapp=(Myapp)getApplication();
+       // initdata();
 
         //toolbar设置
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -133,8 +135,8 @@ public class Search extends AppCompatActivity {
     public void search_rxjava(String s){
         //ZhandianInfterface xiaoshuo = new ZhandianC();
         Zhandian_Maker zm=new Zhandian_Maker();
-        Log.i("testcrab","search.java --search_rxjava:"+Xuanzhe_zhandian);
-        ZhandianInfterface xiaoshuo = zm.maker_zhandian(Xuanzhe_zhandian);
+        Log.i("testcrab","search.java --search_rxjava:"+myapp.Xuanzhe_zhandian);
+        ZhandianInfterface xiaoshuo = zm.maker_zhandian(myapp.Xuanzhe_zhandian);
         xiaoshuo.getsearch(CreatSubscriber(),s );
     }
 }
