@@ -3,11 +3,14 @@ package com.beibei.mingmanman.readxiaoshuo;
 import android.util.Log;
 
 import com.beibei.mingmanman.readxiaoshuo.model.Zhandian_info;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -23,34 +26,48 @@ public class ZhandianA extends Base_zhandian implements ZhandianInfterface {
     private String zhandian_ming = "笔趣阁1";
     private String base_search_url = "http://zhannei.baidu.com/cse/search?s=7138806708853866527&q=";
     List<Mulu_info> mulu_list = new ArrayList<Mulu_info>();
+
     public ZhandianA() {
         this.mulu_list = new ArrayList<Mulu_info>();
     }
-    public ZhandianA(Zhandian_info zhandian){
+
+    public ZhandianA(Zhandian_info zhandian) {
         this.mulu_list = new ArrayList<Mulu_info>();
-        this.zhandian=zhandian;
+        this.zhandian = zhandian;
     }
 
     //=============还未完成====================
 
-    public Geng_xin_info getmulu_number_page(String url){
-        Geng_xin_info gengxin_info=new Geng_xin_info();
+    public Geng_xin_info getmulu_number_page(String url) {
+        Geng_xin_info gengxin_info = new Geng_xin_info();
         Document doc = getweb(url);
         if (doc != null) {
             Element l1 = doc.select("#list").first();
             Elements links = l1.select("a");
-            gengxin_info.zhangjie_shu=links.size();
+            gengxin_info.zhangjie_shu = links.size();
         }
         return gengxin_info;
     }
-    public  void getmulu_number(Subscriber<Geng_xin_info> subscriber, String url){
+
+    public void getmulu_number(Subscriber<Geng_xin_info> subscriber, String url) {
         Observable.just(url)
-                .map(s->getmulu_number_page(s))
+                .map(s -> getmulu_number_page(s))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
     }
 //=======================================================
+
+
+    //=========精确返回一个搜索小说在本站点的连接=======================
+    @Override
+    public void get_xiaoshuo_mulu_url(Subscriber<Searchinfo> s_obj, String guanjianzhi) {
+        Observable.just(guanjianzhi)
+                .map(s -> getsearchxiaoshuo_mulu_url(base_search_url + s, zhandian_ming, s))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s_obj);
+    }
 
     @Override
     public void getmulu(Subscriber<List<Mulu_info>> subscriber, String url) {
@@ -67,7 +84,7 @@ public class ZhandianA extends Base_zhandian implements ZhandianInfterface {
     }
 
     public List<Mulu_info> getmulupage(String url) {
-        Log.i("testcrab","站点A---------getmulupage函数");
+        Log.i("testcrab", "站点A---------getmulupage函数");
         List<Mulu_info> tmp_list = new ArrayList<Mulu_info>();
         Document doc = getweb(url);
         if (doc != null) {
@@ -101,7 +118,7 @@ public class ZhandianA extends Base_zhandian implements ZhandianInfterface {
     }
 
     public String getneirongpage(String url) {
-        Log.i("testcrab","站点A---------getneirongpage");
+        Log.i("testcrab", "站点A---------getneirongpage");
         String neirong = "";
         Document doc = getweb(url);
         if (doc != null) {
@@ -119,7 +136,7 @@ public class ZhandianA extends Base_zhandian implements ZhandianInfterface {
                 .map(new Func1<String, List<Searchinfo>>() {
                     @Override
                     public List<Searchinfo> call(String s) {
-                        return getsearchpage(base_search_url + s,zhandian_ming);
+                        return getsearchpage(base_search_url + s, zhandian_ming);
                     }
                 })
                 .subscribeOn(Schedulers.io())

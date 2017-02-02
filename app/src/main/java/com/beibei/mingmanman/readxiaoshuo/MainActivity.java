@@ -10,14 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.OrientationHelper;
-import android.support.v7.widget.PopupMenu;
+
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
-import android.view.Menu;
+
 import android.view.MenuItem;
-import android.view.SubMenu;
+
 import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
@@ -32,19 +32,18 @@ import org.jsoup.nodes.Document;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import nl.qbusict.cupboard.QueryResultIterable;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
+
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 import static nl.qbusict.cupboard.CupboardFactory.cupboard;
+import nl.qbusict.cupboard.QueryResultIterable;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView Rv_xiaoshuo;

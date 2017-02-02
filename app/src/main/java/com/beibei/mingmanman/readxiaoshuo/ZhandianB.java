@@ -30,32 +30,44 @@ public class ZhandianB extends Base_zhandian implements ZhandianInfterface {
     public ZhandianB() {
         this.mulu_list = new ArrayList<Mulu_info>();
     }
-    public ZhandianB(Zhandian_info zhandian){
+
+    public ZhandianB(Zhandian_info zhandian) {
         this.mulu_list = new ArrayList<Mulu_info>();
-        this.zhandian=zhandian;
+        this.zhandian = zhandian;
     }
 
     //=============还未完成====================
 
-    public Geng_xin_info getmulu_number_page(String url){
-        Geng_xin_info gengxin_info=new Geng_xin_info();
+    public Geng_xin_info getmulu_number_page(String url) {
+        Geng_xin_info gengxin_info = new Geng_xin_info();
         Document doc = getweb(url);
         if (doc != null) {
             Element l1 = doc.select("#list").first();
             Elements links = l1.select("a");
-            gengxin_info.zhangjie_shu=links.size();
+            gengxin_info.zhangjie_shu = links.size();
         }
         return gengxin_info;
     }
-    public  void getmulu_number(Subscriber<Geng_xin_info> subscriber, String url){
+
+    public void getmulu_number(Subscriber<Geng_xin_info> subscriber, String url) {
         Observable.just(url)
-                .map(s->getmulu_number_page(s))
+                .map(s -> getmulu_number_page(s))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
     }
 //=======================================================
 
+    //=========精确返回一个搜索小说在本站点的连接=======================
+    @Override
+    public void get_xiaoshuo_mulu_url(Subscriber<Searchinfo> s_obj, String guanjianzhi) {
+        Observable.just(guanjianzhi)
+                .map(s -> getsearchxiaoshuo_mulu_url(base_search_url + s, zhandian_ming, s))
+                .map(s -> shujuzhengli(s))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s_obj);
+    }
     @Override
     public void getmulu(Subscriber<List<Mulu_info>> subscriber, String url) {
         Observable.just(url)
@@ -71,16 +83,16 @@ public class ZhandianB extends Base_zhandian implements ZhandianInfterface {
     }
 
     public List<Mulu_info> getmulupage(String url) {
-        Log.i("testcrab","站点B---------getmulupage函数");
+        Log.i("testcrab", "站点B---爱上书屋------getmulupage函数");
         List<Mulu_info> tmp_list = new ArrayList<Mulu_info>();
-        Log.i("testcrab","url为"+url);
+        Log.i("testcrab", "url为" + url);
         Document doc = getweb(url);
-        Log.i("testcrab",doc.outerHtml());
+        Log.i("testcrab", doc.outerHtml());
         if (doc != null) {
-            Log.i("testcrab","获得页面");
+            Log.i("testcrab", "获得页面");
             Element l1 = doc.select("div.book_article_texttable").first();
             Elements links = l1.select("a");
-            Log.i("testcrab","连接数:"+links.size());
+            Log.i("testcrab", "连接数:" + links.size());
             for (Element element : links) {
                 tmp_list.add(new Mulu_info(element.text(), element.attr("href")));
             }
@@ -109,7 +121,7 @@ public class ZhandianB extends Base_zhandian implements ZhandianInfterface {
     }
 
     public String getneirongpage(String url) {
-        Log.i("testcrab","站点B---------getneirongpage");
+        Log.i("testcrab", "站点B-----爱上书屋----getneirongpage");
         String neirong = "";
         Document doc = getweb(url);
         if (doc != null) {
@@ -117,7 +129,7 @@ public class ZhandianB extends Base_zhandian implements ZhandianInfterface {
             Element l1 = doc.select("div#booktext").first();
             neirong = l1.html();
         } else {
-            neirong = "出错了！";
+            neirong = "爱上书屋--getneirongpage---出错了！";
         }
         return neirong;
     }
@@ -128,21 +140,26 @@ public class ZhandianB extends Base_zhandian implements ZhandianInfterface {
                 .map(new Func1<String, List<Searchinfo>>() {
                     @Override
                     public List<Searchinfo> call(String s) {
-                        return getsearchpage(base_search_url + s,zhandian_ming);
+                        return getsearchpage(base_search_url + s, zhandian_ming);
                     }
                 })
-                .map(s->shujuzhengli(s))
+                .map(s -> shujuzhengli(s))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s_obj);
     }
 
     public List<Searchinfo> shujuzhengli(List<Searchinfo> s) {
-        for(int i=0;i<s.size();i++){
-            Searchinfo aa=s.get(i);
-            aa.xiaoshuo_base_url=aa.xiaoshuo_base_url.replace("index.html","");
-            s.set(i,aa);
+        for (int i = 0; i < s.size(); i++) {
+            Searchinfo aa = s.get(i);
+            aa.xiaoshuo_base_url = aa.xiaoshuo_base_url.replace("index.html", "");
+            s.set(i, aa);
         }
-        return  s;
+        return s;
+    }
+
+    public Searchinfo shujuzhengli(Searchinfo s) {
+        s.xiaoshuo_base_url = s.xiaoshuo_base_url.replace("index.html", "");
+        return s;
     }
 }

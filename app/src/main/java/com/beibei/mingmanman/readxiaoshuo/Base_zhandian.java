@@ -28,7 +28,44 @@ public class Base_zhandian {
         }
         return doc;
     }
-    public List<Searchinfo> getsearchpage(String search_url,String zhandian_ming) {
+    //---------------------------直接通过搜索获得小说名在对应站点对应的目录地址-------------------------------
+    public Searchinfo getsearchxiaoshuo_mulu_url(String search_url, String zhandian_ming, String xiaoshuo_name) {
+        Searchinfo aaa = new Searchinfo();
+        List<Searchinfo> searchinfolist;
+        Document doc = getweb(search_url);
+        if (doc != null) {
+            searchinfolist = new ArrayList<Searchinfo>();
+            Elements dds = doc.select(".result-item");
+            for (Element element : dds) {
+                try {
+                    aaa.xiaoshuo_name = element.select(".result-item-title").first().text();
+                    if (aaa.xiaoshuo_name.equals(xiaoshuo_name)) {
+                        aaa.zhandian_ming = zhandian_ming;
+                        Element pic = element.select(".result-game-item-pic-link-img").first();
+                        aaa.img_url = pic.attr("src");
+                        aaa.xiaoshuo_base_url = element.select(".result-game-item-title-link").first().attr("href");
+                        aaa.xiaoshuo_mulu_url = aaa.xiaoshuo_base_url;
+                        try {
+                            aaa.xiaoshuo_jianjie = element.select(".result-game-item-desc").first().text();
+                        } catch (Exception e) {
+                            aaa.xiaoshuo_jianjie = "无";
+                        }
+                        Elements tmp_info = element.select(".result-game-item-info-tag");
+                        aaa.xiaoshuo_info = "";
+                        for (Element e : tmp_info) {
+                            aaa.xiaoshuo_info = aaa.xiaoshuo_info + e.text() + "  ";
+                        }
+                        break;
+                    }
+                    searchinfolist.add(aaa);
+                } catch (Exception e) {
+                }
+            }
+        }
+        return aaa;
+    }
+
+    public List<Searchinfo> getsearchpage(String search_url, String zhandian_ming) {
         List<Searchinfo> searchinfolist = null;
         Document doc = getweb(search_url);
         if (doc != null) {
@@ -52,10 +89,10 @@ public class Base_zhandian {
 
                     aaa.xiaoshuo_mulu_url = aaa.xiaoshuo_base_url;
 
-                    try{
+                    try {
                         aaa.xiaoshuo_jianjie = element.select(".result-game-item-desc").first().text();
-                    }catch (Exception e) {
-                        aaa.xiaoshuo_jianjie="无";
+                    } catch (Exception e) {
+                        aaa.xiaoshuo_jianjie = "无";
                     }
                     Log.i("testcrab", ".result-game-item-desc" + aaa.xiaoshuo_jianjie);
 

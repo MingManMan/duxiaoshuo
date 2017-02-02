@@ -1,9 +1,11 @@
 package com.beibei.mingmanman.readxiaoshuo;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,6 +27,8 @@ import java.util.List;
 
 import rx.Subscriber;
 
+import static nl.qbusict.cupboard.CupboardFactory.cupboard;
+
 public class MuluActivity extends AppCompatActivity {
     private Button shang_yi_ye, xia_yi_ye;
     private ListView lv;
@@ -41,15 +45,17 @@ public class MuluActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private Myapp myapp;
 
+    private static SQLiteDatabase db;
+    private XiaoshuoDatabaseHelper dbHelper;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mulu);
 
         myapp = (Myapp) getApplication();
-
-        get_chanshu();
-        initData();
+        initData(); //初始化，无实际操作
         initView();
         get_mulu();
     }
@@ -90,38 +96,33 @@ public class MuluActivity extends AppCompatActivity {
                     Collections.reverse(adapter_show);
                     adapter.notifyDataSetChanged();
                 }
-                //---------------------站点切换被点击--------------------------------------
-                /*else if (menuItemId == R.id.action_switch) {
-                    //Snackbar.make(mycontainer, "SnackbarTest", Snackbar.LENGTH_LONG).show();
-
-                }*/
                 //========================切换站点======================================
                 else {
                     if (menuItemId == R.id.action_zhandian1) {//笔趣阁1
                         myapp.Xuanzhe_zhandian = "笔趣阁1";
                         Snackbar.make(mycontainer, "笔趣阁1", Snackbar.LENGTH_LONG).show();
-
+                        switchzhandian(myapp.Xuanzhe_zhandian);
                     } else if (menuItemId == R.id.action_zhandian2) {//笔趣阁2
                         myapp.Xuanzhe_zhandian = "笔趣阁2";
                         Snackbar.make(mycontainer, "笔趣阁2", Snackbar.LENGTH_LONG).show();
+                        switchzhandian(myapp.Xuanzhe_zhandian);
                     } else if (menuItemId == R.id.action_zhandian3) {//爱上书屋
                         myapp.Xuanzhe_zhandian = "爱上书屋";
                         Snackbar.make(mycontainer, "爱上书屋", Snackbar.LENGTH_LONG).show();
+                        switchzhandian(myapp.Xuanzhe_zhandian);
                     } else if (menuItemId == R.id.action_zhandian4) {//新八一中文网
                         //Xuanzhe_zhandian="新八一中文网";
                         Snackbar.make(mycontainer, "新八一中文网", Snackbar.LENGTH_LONG).show();
+                        switchzhandian(myapp.Xuanzhe_zhandian);
                     } else if (menuItemId == R.id.action_zhandian5) {//八一中文网
                         //Xuanzhe_zhandian="八一中文网";
                         Snackbar.make(mycontainer, "八一中文网", Snackbar.LENGTH_LONG).show();
-
+                        switchzhandian(myapp.Xuanzhe_zhandian);
                     }
-                    switchzhandian(myapp.Xuanzhe_zhandian);
                 }
-
                 return true;
             }
         });
-
         lv = (ListView) findViewById(R.id.lv);
         adapter = new ArrayAdapter<String>(MuluActivity.this, android.R.layout.simple_expandable_list_item_1, adapter_show);
         lv.setAdapter(adapter);
@@ -137,17 +138,75 @@ public class MuluActivity extends AppCompatActivity {
         });
     }
 
+    //----------------------站点切换---------------------------
     private void switchzhandian(String xuanzhe_zhandian) {
-        //查看数据库中是否存在该小说，该站点的记录
-
-        //不存在，调用对应search函数生成记录
-
-        //存在，用记录填充xiaoshuo对象
-
+        Xiaoshuo_info xs_info =
+                cupboard().withDatabase(db).query(Xiaoshuo_info.class).withSelection("xiaoshuo_ming = ? and zhandian_ming= ? ", myapp.xiaoshuo.xiaoshuo_ming, myapp.Xuanzhe_zhandian).get();
+        //-----------------对应站点小说记录是否存在判断
+        if (xs_info == null) {//-------- 不存在，调用对应search函数生成记录
+            Log.i("testcrab","记录不存在");
+            Log.i("testcrab","调用get_xiaoshuo_mulu_url_rxjava函数，进行添加");
+            get_xiaoshuo_mulu_url_rxjava();
+        } else {//------存在，用记录填充xiaoshuo对象
+            Log.i("testcrab","=====================");
+            Log.i("testcrab",xs_info.xiaoshuo_ming);
+            Log.i("testcrab",xs_info.zhandian_ming);
+            Log.i("testcrab","=====================");
+            myapp.xiaoshuo=xs_info;
+        }
+        get_mulu();
         //刷新列表
     }
 
+    Subscriber<Searchinfo> S_obj_get_mulu_url = new Subscriber<Searchinfo>() {
+        @Override
+        public void onCompleted() {
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Toast.makeText(MuluActivity.this, "error:" + e.toString(), Toast.LENGTH_SHORT).show();
+            Log.i("testcrab", e.toString());
+        }
+        @Override
+        public void onNext(Searchinfo s) {
+            Log.i("testcrab","==================S_obj_get_mulu_url===============");
+            //数据对错判断
+            if (s.xiaoshuo_name.equals("none")) {  //-----没有找到
+                String msg="站点："+myapp.Xuanzhe_zhandian+"为找到小说："+myapp.xiaoshuo.xiaoshuo_ming;
+                AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(MuluActivity.this);
+                builder.setTitle("搜索错误");
+                builder.setMessage(msg);
+                builder.setPositiveButton("确定", null);
+                builder.show();
+            } else {//----  找到了
+                //添加：到数据库
+                Xiaoshuo_info xiaoshuo_info = new Xiaoshuo_info();
+                myapp.xiaoshuo.xiaoshuo_ming=s.xiaoshuo_name;
+                myapp.xiaoshuo.zhandian_ming= s.zhandian_ming;
+                myapp.xiaoshuo.xiaoshuo_base_url=s.xiaoshuo_base_url;
+                myapp.xiaoshuo.xiaoshuo_mulu_url=s.xiaoshuo_mulu_url;
+                myapp.xiaoshuo.list_order=1;
+                myapp.xiaoshuo.xiaoshuo_zhangjie=0;
+                myapp.xiaoshuo.xiaoshuo_yuedu_zhangjie=0;
+                cupboard().withDatabase(db).put(myapp.xiaoshuo);
+                Log.i("testcrab","数据库添加完成");
+            }
+        }
+    };
+
+    private void get_xiaoshuo_mulu_url_rxjava() {
+        //启动线程获得目录页面内容
+        Zhandian_Maker zm = new Zhandian_Maker();
+        ZhandianInfterface xiaoshuo1 = zm.maker_zhandian(myapp.Xuanzhe_zhandian);
+        xiaoshuo1.get_xiaoshuo_mulu_url(S_obj_get_mulu_url, myapp.xiaoshuo.xiaoshuo_ming);
+    }
     private void go_dushu() {
+       /* Log.i("testcrab","baselink:"+baselink);
+        Log.i("testcrab","all_index"+all_index);
+        Log.i("testcrab","章节对应目录:"+xiaoshuo_mulu_link.size());
+        Log.i("testcrab",myapp.xiaoshuo.xiaoshuo_ming);
+        Log.i("testcrab",myapp.xiaoshuo.zhandian_ming);*/
         Intent intent = new Intent();
         intent.putExtra("baselink", baselink);  //放入数据
         intent.putExtra("all_index", all_index);  //放入数据,连接位置
@@ -157,19 +216,11 @@ public class MuluActivity extends AppCompatActivity {
         startActivity(intent);  //开始跳转
     }
 
-    private void get_chanshu() {
-        /*Intent intent = this.getIntent();    //获得当前的Intent
-        Bundle bundle = intent.getExtras();  //获得全部数据
-        xiaoshuo = bundle.getParcelable("xiaoshuo");*/
-        Log.i("testcrab", "get_chanshu  获得小说：" +myapp.xiaoshuo.xiaoshuo_ming);
-    }
-
     private void get_mulu() {
         //根据小说名，获得小说的站点地址
         baselink = myapp.xiaoshuo.xiaoshuo_base_url;
         xiaoshuo_mulu_dizhi = myapp.xiaoshuo.xiaoshuo_mulu_url;
         //根据地址获得目录
-        Log.i("testcrab", "get_mulu " + xiaoshuo_mulu_dizhi);
         get_xiaoshuo_mulu_rxjava();
     }
 
@@ -183,7 +234,6 @@ public class MuluActivity extends AppCompatActivity {
             Toast.makeText(MuluActivity.this, "error:" + e.toString(), Toast.LENGTH_SHORT).show();
             Log.i("testcrab", e.toString());
         }
-
         @Override
         public void onNext(List<Mulu_info> s) {
             //清空原有目录
@@ -193,6 +243,7 @@ public class MuluActivity extends AppCompatActivity {
                 xiaoshuo_mulu_show.add(a.mingzhi);
                 xiaoshuo_mulu_link.add(a.dizhi);
             }
+            Log.i("testcrab","目录更新后----章节地址:"+xiaoshuo_mulu_link.get(0));
             Collections.reverse(xiaoshuo_mulu_show);
             Collections.reverse(xiaoshuo_mulu_link);
 ///////////////////////////
@@ -215,9 +266,8 @@ public class MuluActivity extends AppCompatActivity {
     private void get_xiaoshuo_mulu_rxjava() {
         //启动线程获得目录页面内容
         Zhandian_Maker zm = new Zhandian_Maker();
-        ZhandianInfterface xiaoshuo1 = zm.maker_zhandian(myapp.xiaoshuo.zhandian_ming);
+        ZhandianInfterface xiaoshuo1 = zm.maker_zhandian(myapp.Xuanzhe_zhandian);
         xiaoshuo1.getmulu(S_obj, xiaoshuo_mulu_dizhi);
-
     }
 
     private List<String> get_xiaoshuo_mulu_dizhi(String xiaoshuo_ming) {
@@ -238,10 +288,16 @@ public class MuluActivity extends AppCompatActivity {
     }
 
     private void initData() {
+        dbHelper = new XiaoshuoDatabaseHelper(MuluActivity.this);
+        db = dbHelper.getWritableDatabase();
         xiaoshuo_address = new ArrayList<String>();
         xiaoshuo_mulu_show = new ArrayList<String>();
         xiaoshuo_mulu_link = new ArrayList<String>();
         adapter_show = new ArrayList<String>();
     }
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        get_mulu();
+    }
 }
