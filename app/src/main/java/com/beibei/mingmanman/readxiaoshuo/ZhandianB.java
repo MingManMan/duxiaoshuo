@@ -60,7 +60,7 @@ public class ZhandianB extends Base_zhandian implements ZhandianInfterface {
 
     //=========精确返回一个搜索小说在本站点的连接=======================
     @Override
-    public void get_xiaoshuo_mulu_url(Subscriber<Searchinfo> s_obj, String guanjianzhi) {
+    public void get_xiaoshuo_mulu_url_byname(Subscriber<Searchinfo> s_obj, String guanjianzhi) {
         Observable.just(guanjianzhi)
                 .map(s -> getsearchxiaoshuo_mulu_url(base_search_url + s, zhandian_ming, s))
                 .map(s -> shujuzhengli(s))

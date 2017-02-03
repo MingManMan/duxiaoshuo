@@ -69,8 +69,7 @@ public class MainActivity extends AppCompatActivity {
         //requestWindowFeature(Window.FEATURE_NO_TITLE) ）；
         setContentView(R.layout.activity_main);
 
-        myapp=(Myapp)getApplication();
-
+        myapp=(Myapp)getApplication(); //全局变量
         initData();//正在阅读小说的信息加载
         initview();
         checkupdate();
@@ -137,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 //========================切换站点======================================
                 else if (menuItemId == R.id.action_zhandian1) {//笔趣阁1
-                   myapp.Xuanzhe_zhandian="笔趣阁1";
+                    myapp.Xuanzhe_zhandian="笔趣阁1";
                     switchzhandian(myapp.Xuanzhe_zhandian);
                     Snackbar.make(mycontainer, "笔趣阁1", Snackbar.LENGTH_LONG).show();
 

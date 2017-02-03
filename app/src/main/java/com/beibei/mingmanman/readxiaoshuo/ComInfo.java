@@ -33,6 +33,6 @@ interface ZhandianInfterface {
     void getmulu(Subscriber<List<Mulu_info>> subscriber, String url);
     void getxiaoshuoneirong(Subscriber<String> s_obj, String url);
     void getsearch(Subscriber<List<Searchinfo>> s_obj, String guanjianzhi);
-    void get_xiaoshuo_mulu_url(Subscriber<Searchinfo> s_obj_get_mulu_url, String xiaoshuo_ming);
+    void get_xiaoshuo_mulu_url_byname(Subscriber<Searchinfo> s_obj_get_mulu_url, String xiaoshuo_ming);
 }
 
