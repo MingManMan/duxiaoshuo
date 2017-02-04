@@ -156,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
                 else if (menuItemId == R.id.action_zhandian5) {//八一中文网
                     //myapp.Xuanzhe_zhandian="八一中文网";
                     Snackbar.make(mycontainer, "八一中文网", Snackbar.LENGTH_LONG).show();
-
                 }
                 return true;
             }

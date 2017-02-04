@@ -65,6 +65,7 @@
             android:textSize="20sp"
             android:lineSpacingExtra="8sp"
             android:textAlignment="viewStart"
-            android:fontFamily="sans-serif" />
+            android:fontFamily="sans-serif"
+            android:scrollbars="vertical" />
     </LinearLayout>
 </RelativeLayout>

@@ -60,14 +60,31 @@ public class ZhandianB extends Base_zhandian implements ZhandianInfterface {
 
     //=========精确返回一个搜索小说在本站点的连接=======================
     @Override
-    public void get_xiaoshuo_mulu_url_byname(Subscriber<Searchinfo> s_obj, String guanjianzhi) {
+    public void get_xiaoshuo_muluurl_zhandianinfo_byname(Subscriber<Xiaoshuo_in_One> s_obj, String guanjianzhi) {
         Observable.just(guanjianzhi)
                 .map(s -> getsearchxiaoshuo_mulu_url(base_search_url + s, zhandian_ming, s))
                 .map(s -> shujuzhengli(s))
+                .map(s->get_searchxiaoshuo_zhangjie(s))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s_obj);
     }
+    public Xiaoshuo_in_One get_searchxiaoshuo_zhangjie(Searchinfo s ){
+        Xiaoshuo_in_One a=new Xiaoshuo_in_One();
+        a.xiaoshuo.xiaoshuo_ming=s.xiaoshuo_name;
+        a.xiaoshuo.zhandian_ming = s.zhandian_ming;
+        a.xiaoshuo.xiaoshuo_base_url = s.xiaoshuo_base_url;
+        a.xiaoshuo.xiaoshuo_mulu_url = s.xiaoshuo_mulu_url;
+        if(!a.xiaoshuo.xiaoshuo_ming.equals("none")){
+            a.mulu_list.addAll( getmulupage(s.xiaoshuo_mulu_url));
+        }
+        return a;
+    }
+
+
+
+
+
     @Override
     public void getmulu(Subscriber<List<Mulu_info>> subscriber, String url) {
         Observable.just(url)

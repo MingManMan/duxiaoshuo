@@ -1,5 +1,6 @@
 package com.beibei.mingmanman.readxiaoshuo;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.widget.RecyclerView;
@@ -84,6 +85,7 @@ public class SearchlistAdapter extends RecyclerView.Adapter<SearchlistAdapter.Vi
                     xiaoshuo_info.xiaoshuo_base_url=mDatas.get(position).xiaoshuo_base_url;
                     xiaoshuo_info.xiaoshuo_mulu_url=mDatas.get(position).xiaoshuo_mulu_url;
                     xiaoshuo_info.list_order=1;
+                    xiaoshuo_info.isDefaultZhandian=true;
                     cupboard().withDatabase(db).put(xiaoshuo_info);
                         AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(mContext);
                         builder.setTitle("添加小说");

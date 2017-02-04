@@ -14,8 +14,8 @@ public class Xiaoshuo_info implements Parcelable {
     public String  xiaoshuo_mulu_url;//小说目录地址
     public Integer xiaoshuo_zhangjie=0; //小说章节总数，用来跟踪是否有新章节，大于这个总数就是有更新
     public Integer xiaoshuo_yuedu_zhangjie=0;//小说已经阅读到的章节，一遍在进入目录时显示相关章节
-
     public int  list_order;  //小说排位
+    public boolean isDefaultZhandian=false;
     public Xiaoshuo_info(){
         this.xiaoshuo_ming="noName";
         this.zhandian_ming="noZhandian";

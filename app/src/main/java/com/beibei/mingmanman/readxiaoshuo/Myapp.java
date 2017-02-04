@@ -12,7 +12,6 @@ public class Myapp extends Application {
     public String Xuanzhe_zhandian;
     public Xiaoshuo_info xiaoshuo=new Xiaoshuo_info();
 
-
     public void onCreate() {
         super.onCreate();
         Xuanzhe_zhandian = "笔趣阁2";
